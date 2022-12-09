@@ -1,5 +1,7 @@
 # 高分辨率画 High-Resolution Paintings
 
+添加了原版25种画的高清版本。
+
 Added High-Resolution version of the 25 vanilla paintings.
 
 添加了行为类似原版画的物品和实体，用于展示高分辨率画。
