@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "myitian-hirespaintings",
+  "version": "1.0.0",
+  "name": "High-Resolution Painting",
+  "description": "Created a item and entity that behave like the vanilla painting for displaying high-resolution paintings.",
+  "authors": [
+    "Myitian"
+  ],
+  "contact": {
+    "homepage": "https://github.com/Myitian/",
+    "sources": "https://github.com/Myitian/hirespaintings"
+  },
+  "license": "MIT",
+  "icon": "assets/hirespaintings/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.myitian.hirespaintings.HiResPaintingsMain"
+    ],
+    "client": [
+      "com.myitian.hirespaintings.HiResPaintingsClient"
+    ]
+  },
+  "mixins": [
+  ],
+  "depends": {
+    "fabricloader": ">=0.13.3",
+    "fabric": "*",
+    "minecraft": "1.18.x",
+    "java": ">=17"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
