@@ -2,8 +2,6 @@
 
 Added High-Resolution version of the 25 vanilla paintings.
 
-Aed
-
 添加了行为类似原版画的物品和实体，用于展示高分辨率画。
 
 Added an item and an entity that behave like the vanilla painting for displaying high-resolution paintings.
