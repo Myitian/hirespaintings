@@ -7,7 +7,9 @@ Created a item and entity that behave like the vanilla painting for displaying h
 ## 依赖 Depends
 
 fabricloader >= 0.13.3
+
 minecraft : 1.18.x
+
 java >= 17
 
 ## 与原版画的对比 Comparison with the vanilla painting
