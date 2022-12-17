@@ -12,9 +12,7 @@ import net.minecraft.entity.SpawnGroup;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.DefaultedRegistry;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.util.registry.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +39,7 @@ public class HiResPaintingsMain implements ModInitializer {
     public static final RegistryKey<Registry<HiResPaintingMotive>> MOTIVE_KEY = RegistryKey.ofRegistry(new Identifier(MODID, "motive"));
 
     public static final DefaultedRegistry<HiResPaintingMotive> HIRESPAINTING_MOTIVE = new DefaultedRegistry<>(
-            "hirespainting:kebab",
+            "hirespaintings:kebab",
             MOTIVE_KEY,
             Lifecycle.experimental(),
             null);

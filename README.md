@@ -12,7 +12,7 @@ Added an item and an entity that behave like the vanilla painting for displaying
 
 fabricloader >= 0.13.3
 
-minecraft : 1.18.x
+minecraft = 1.18.2
 
 java >= 17
 

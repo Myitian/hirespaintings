@@ -63,12 +63,6 @@ public class HiResPaintingEntityRenderer extends EntityRenderer<HiResPaintingEnt
         float backSpriteMaxV = backSprite.getMaxV();
         float backSpriteFrameV = backSprite.getFrameV(1.0);
         float backSpriteFrameU = backSprite.getFrameU(1.0);
-        // float backSpriteMinU = backSprite.getMinU();
-        // float backSpriteMaxU = backSprite.getMaxU();
-        // float backSpriteMinV = backSprite.getMinV();
-        // float backSpriteMinU = backSprite.getMinU();
-        // float backSpriteMinV = backSprite.getMinV();
-        // float backSpriteMaxV = backSprite.getMaxV();
         int w_16 = width / 16;
         int h_16 = height / 16;
         double w_16_r = 16.0 / (double) w_16;
@@ -80,13 +74,13 @@ public class HiResPaintingEntityRenderer extends EntityRenderer<HiResPaintingEnt
                 float c = h_2 + (float) ((j + 1) * 16);
                 float d = h_2 + (float) (j * 16);
                 int x = entity.getBlockX();
-                int y = MathHelper.floor(entity.getY() + (double) ((c + d) / 2.0f / 16.0f));
+                int y = MathHelper.floor(entity.getY() + (double) ((c + d) / 32.0f));
                 int z = entity.getBlockZ();
                 switch (entity.getHorizontalFacing()) {
-                    case NORTH -> x = MathHelper.floor(entity.getX() + (double) ((a + b) / 2.0f / 16.0f));
-                    case WEST -> z = MathHelper.floor(entity.getZ() - (double) ((a + b) / 2.0f / 16.0f));
-                    case SOUTH -> x = MathHelper.floor(entity.getX() - (double) ((a + b) / 2.0f / 16.0f));
-                    case EAST -> z = MathHelper.floor(entity.getZ() + (double) ((a + b) / 2.0f / 16.0f));
+                    case NORTH -> x = MathHelper.floor(entity.getX() + (double) ((a + b) / 32.0f));
+                    case WEST -> z = MathHelper.floor(entity.getZ() - (double) ((a + b) / 32.0f));
+                    case SOUTH -> x = MathHelper.floor(entity.getX() - (double) ((a + b) / 32.0f));
+                    case EAST -> z = MathHelper.floor(entity.getZ() + (double) ((a + b) / 32.0f));
                 }
                 int light = WorldRenderer.getLightmapCoordinates(entity.world, new BlockPos(x, y, z));
                 float paintingSpriteFrameU = paintingSprite.getFrameU(w_16_r * (double) (w_16 - i));
