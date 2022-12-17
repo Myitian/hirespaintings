@@ -3,120 +3,153 @@
  */
 package com.myitian.client.render.entity;
 
+import com.mojang.blaze3d.platform.GLX;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.myitian.client.texture.HiResPaintingManager;
 import com.myitian.entity.decoration.hirespainting.HiResPaintingEntity;
 import com.myitian.entity.decoration.hirespainting.HiResPaintingMotive;
 import com.myitian.hirespaintings.HiResPaintingsClient;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
+import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.texture.PaintingManager;
 import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.decoration.painting.PaintingEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
 
 @Environment(value = EnvType.CLIENT)
 public class HiResPaintingEntityRenderer extends EntityRenderer<HiResPaintingEntity> {
 
-    public HiResPaintingEntityRenderer(EntityRendererFactory.Context context) {
-        super(context);
+    public HiResPaintingEntityRenderer(EntityRenderDispatcher dispatcher) {
+        super(dispatcher);
     }
 
     @Override
-    public void render(HiResPaintingEntity paintingEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
-        matrixStack.push();
-        matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180.0f - f));
+    public void render(HiResPaintingEntity paintingEntity, double d, double e, double f, float g, float h) {
+        GlStateManager.pushMatrix();
+        GlStateManager.translated(d, e, f);
+        GlStateManager.rotatef(180.0F - g, 0.0F, 1.0F, 0.0F);
+        GlStateManager.enableRescaleNormal();
+        this.bindEntityTexture(paintingEntity);
         HiResPaintingMotive paintingMotive = paintingEntity.motive;
-        matrixStack.scale(0.0625f, 0.0625f, 0.0625f);
-        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(this.getTexture(paintingEntity)));
-        HiResPaintingManager paintingManager = HiResPaintingsClient.getHiResPaintingManager();
+        float i = 0.0625F;
+        GlStateManager.scalef(0.0625F, 0.0625F, 0.0625F);
+        if (this.renderOutlines) {
+            GlStateManager.enableColorMaterial();
+            GlStateManager.setupSolidRenderingTextureCombine(this.getOutlineColor(paintingEntity));
+        }
 
-        this.renderPainting(
-                matrixStack,
-                vertexConsumer,
-                paintingEntity,
-                paintingMotive.getWidth(),
-                paintingMotive.getHeight(),
-                paintingManager.getPaintingSprite(paintingMotive),
-                paintingManager.getBackSprite()
-        );
-        matrixStack.pop();
-        super.render(paintingEntity, f, g, matrixStack, vertexConsumerProvider, i);
+        HiResPaintingManager paintingManager = HiResPaintingsClient.getHiResPaintingManager();
+        this.renderPainting(paintingEntity, paintingMotive.getWidth(), paintingMotive.getHeight(), paintingManager.getPaintingSprite(paintingMotive), paintingManager.getBackSprite());
+        if (this.renderOutlines) {
+            GlStateManager.tearDownSolidRenderingTextureCombine();
+            GlStateManager.disableColorMaterial();
+        }
+
+        GlStateManager.disableRescaleNormal();
+        GlStateManager.popMatrix();
+        super.render(paintingEntity, d, e, f, g, h);
     }
 
     @Override
     public Identifier getTexture(HiResPaintingEntity paintingEntity) {
-        return HiResPaintingsClient.getHiResPaintingManager().getBackSprite().getAtlas().getId();
+        return HiResPaintingManager.HIRESPAINTING_ATLAS_TEX;
     }
 
-    private void renderPainting(MatrixStack matrices, VertexConsumer vertexConsumer, HiResPaintingEntity entity, int width, int height, Sprite paintingSprite, Sprite backSprite) {
-        MatrixStack.Entry entry = matrices.peek();
-        Matrix4f positionMatrix = entry.getPositionMatrix();
-        Matrix3f normalMatrix = entry.getNormalMatrix();
-        float w_2 = (float) (-width) / 2.0f;
-        float h_2 = (float) (-height) / 2.0f;
-        float backSpriteMinU = backSprite.getMinU();
-        float backSpriteMaxU = backSprite.getMaxU();
-        float backSpriteMinV = backSprite.getMinV();
-        float backSpriteMaxV = backSprite.getMaxV();
-        float backSpriteFrameV = backSprite.getFrameV(1.0);
-        float backSpriteFrameU = backSprite.getFrameU(1.0);
-        int w_16 = width / 16;
-        int h_16 = height / 16;
-        double w_16_r = 16.0 / (double) w_16;
-        double h_16_r = 16.0 / (double) h_16;
-        for (int i = 0; i < w_16; ++i) {
-            for (int j = 0; j < h_16; ++j) {
-                float a = w_2 + (float) ((i + 1) * 16);
-                float b = w_2 + (float) (i * 16);
-                float c = h_2 + (float) ((j + 1) * 16);
-                float d = h_2 + (float) (j * 16);
-                int x = entity.getBlockX();
-                int y = MathHelper.floor(entity.getY() + (double) ((c + d) / 32.0f));
-                int z = entity.getBlockZ();
-                switch (entity.getHorizontalFacing()) {
-                    case NORTH -> x = MathHelper.floor(entity.getX() + (double) ((a + b) / 32.0f));
-                    case WEST -> z = MathHelper.floor(entity.getZ() - (double) ((a + b) / 32.0f));
-                    case SOUTH -> x = MathHelper.floor(entity.getX() - (double) ((a + b) / 32.0f));
-                    case EAST -> z = MathHelper.floor(entity.getZ() + (double) ((a + b) / 32.0f));
-                }
-                int light = WorldRenderer.getLightmapCoordinates(entity.world, new BlockPos(x, y, z));
-                float paintingSpriteFrameU = paintingSprite.getFrameU(w_16_r * (double) (w_16 - i));
-                float paintingSpriteFrameU1 = paintingSprite.getFrameU(w_16_r * (double) (w_16 - (i + 1)));
-                float paintingSpriteFrameV = paintingSprite.getFrameV(h_16_r * (double) (h_16 - j));
-                float paintingSpriteFrameV1 = paintingSprite.getFrameV(h_16_r * (double) (h_16 - (j + 1)));
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, a, d, paintingSpriteFrameU1, paintingSpriteFrameV, -0.5f, 0, 0, -1, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, b, d, paintingSpriteFrameU, paintingSpriteFrameV, -0.5f, 0, 0, -1, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, b, c, paintingSpriteFrameU, paintingSpriteFrameV1, -0.5f, 0, 0, -1, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, a, c, paintingSpriteFrameU1, paintingSpriteFrameV1, -0.5f, 0, 0, -1, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, a, c, backSpriteMaxU, backSpriteMinV, 0.5f, 0, 0, 1, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, b, c, backSpriteMinU, backSpriteMinV, 0.5f, 0, 0, 1, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, b, d, backSpriteMinU, backSpriteMaxV, 0.5f, 0, 0, 1, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, a, d, backSpriteMaxU, backSpriteMaxV, 0.5f, 0, 0, 1, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, a, c, backSpriteMinU, backSpriteMinV, -0.5f, 0, 1, 0, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, b, c, backSpriteMaxU, backSpriteMinV, -0.5f, 0, 1, 0, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, b, c, backSpriteMaxU, backSpriteFrameV, 0.5f, 0, 1, 0, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, a, c, backSpriteMinU, backSpriteFrameV, 0.5f, 0, 1, 0, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, a, d, backSpriteMinU, backSpriteMinV, 0.5f, 0, -1, 0, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, b, d, backSpriteMaxU, backSpriteMinV, 0.5f, 0, -1, 0, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, b, d, backSpriteMaxU, backSpriteFrameV, -0.5f, 0, -1, 0, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, a, d, backSpriteMinU, backSpriteFrameV, -0.5f, 0, -1, 0, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, a, c, backSpriteFrameU, backSpriteMinV, 0.5f, -1, 0, 0, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, a, d, backSpriteFrameU, backSpriteMaxV, 0.5f, -1, 0, 0, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, a, d, backSpriteMinU, backSpriteMaxV, -0.5f, -1, 0, 0, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, a, c, backSpriteMinU, backSpriteMinV, -0.5f, -1, 0, 0, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, b, c, backSpriteFrameU, backSpriteMinV, -0.5f, 1, 0, 0, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, b, d, backSpriteFrameU, backSpriteMaxV, -0.5f, 1, 0, 0, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, b, d, backSpriteMinU, backSpriteMaxV, 0.5f, 1, 0, 0, light);
-                this.vertex(positionMatrix, normalMatrix, vertexConsumer, b, c, backSpriteMinU, backSpriteMinV, 0.5f, 1, 0, 0, light);
+    private void renderPainting(HiResPaintingEntity paintingEntity, int i, int j, Sprite sprite, Sprite sprite2) {
+        float f = (float)(-i) / 2.0F;
+        float g = (float)(-j) / 2.0F;
+        float h = 0.5F;
+        float k = sprite2.getMinU();
+        float l = sprite2.getMaxU();
+        float m = sprite2.getMinV();
+        float n = sprite2.getMaxV();
+        float o = sprite2.getMinU();
+        float p = sprite2.getMaxU();
+        float q = sprite2.getMinV();
+        float r = sprite2.getV(1.0D);
+        float s = sprite2.getMinU();
+        float t = sprite2.getU(1.0D);
+        float u = sprite2.getMinV();
+        float v = sprite2.getMaxV();
+        int w = i / 16;
+        int x = j / 16;
+        double d = 16.0D / (double)w;
+        double e = 16.0D / (double)x;
+
+        for(int y = 0; y < w; ++y) {
+            for(int z = 0; z < x; ++z) {
+                float aa = f + (float)((y + 1) * 16);
+                float ab = f + (float)(y * 16);
+                float ac = g + (float)((z + 1) * 16);
+                float ad = g + (float)(z * 16);
+                this.method_4076(paintingEntity, (aa + ab) / 2.0F, (ac + ad) / 2.0F);
+                float ae = sprite.getU(d * (double)(w - y));
+                float af = sprite.getU(d * (double)(w - (y + 1)));
+                float ag = sprite.getV(e * (double)(x - z));
+                float ah = sprite.getV(e * (double)(x - (z + 1)));
+                Tessellator tessellator = Tessellator.getInstance();
+                BufferBuilder bufferBuilder = tessellator.getBufferBuilder();
+                bufferBuilder.begin(7, VertexFormats.POSITION_UV_NORMAL);
+                bufferBuilder.vertex((double)aa, (double)ad, -0.5D).texture((double)af, (double)ag).normal(0.0F, 0.0F, -1.0F).next();
+                bufferBuilder.vertex((double)ab, (double)ad, -0.5D).texture((double)ae, (double)ag).normal(0.0F, 0.0F, -1.0F).next();
+                bufferBuilder.vertex((double)ab, (double)ac, -0.5D).texture((double)ae, (double)ah).normal(0.0F, 0.0F, -1.0F).next();
+                bufferBuilder.vertex((double)aa, (double)ac, -0.5D).texture((double)af, (double)ah).normal(0.0F, 0.0F, -1.0F).next();
+                bufferBuilder.vertex((double)aa, (double)ac, 0.5D).texture((double)k, (double)m).normal(0.0F, 0.0F, 1.0F).next();
+                bufferBuilder.vertex((double)ab, (double)ac, 0.5D).texture((double)l, (double)m).normal(0.0F, 0.0F, 1.0F).next();
+                bufferBuilder.vertex((double)ab, (double)ad, 0.5D).texture((double)l, (double)n).normal(0.0F, 0.0F, 1.0F).next();
+                bufferBuilder.vertex((double)aa, (double)ad, 0.5D).texture((double)k, (double)n).normal(0.0F, 0.0F, 1.0F).next();
+                bufferBuilder.vertex((double)aa, (double)ac, -0.5D).texture((double)o, (double)q).normal(0.0F, 1.0F, 0.0F).next();
+                bufferBuilder.vertex((double)ab, (double)ac, -0.5D).texture((double)p, (double)q).normal(0.0F, 1.0F, 0.0F).next();
+                bufferBuilder.vertex((double)ab, (double)ac, 0.5D).texture((double)p, (double)r).normal(0.0F, 1.0F, 0.0F).next();
+                bufferBuilder.vertex((double)aa, (double)ac, 0.5D).texture((double)o, (double)r).normal(0.0F, 1.0F, 0.0F).next();
+                bufferBuilder.vertex((double)aa, (double)ad, 0.5D).texture((double)o, (double)q).normal(0.0F, -1.0F, 0.0F).next();
+                bufferBuilder.vertex((double)ab, (double)ad, 0.5D).texture((double)p, (double)q).normal(0.0F, -1.0F, 0.0F).next();
+                bufferBuilder.vertex((double)ab, (double)ad, -0.5D).texture((double)p, (double)r).normal(0.0F, -1.0F, 0.0F).next();
+                bufferBuilder.vertex((double)aa, (double)ad, -0.5D).texture((double)o, (double)r).normal(0.0F, -1.0F, 0.0F).next();
+                bufferBuilder.vertex((double)aa, (double)ac, 0.5D).texture((double)t, (double)u).normal(-1.0F, 0.0F, 0.0F).next();
+                bufferBuilder.vertex((double)aa, (double)ad, 0.5D).texture((double)t, (double)v).normal(-1.0F, 0.0F, 0.0F).next();
+                bufferBuilder.vertex((double)aa, (double)ad, -0.5D).texture((double)s, (double)v).normal(-1.0F, 0.0F, 0.0F).next();
+                bufferBuilder.vertex((double)aa, (double)ac, -0.5D).texture((double)s, (double)u).normal(-1.0F, 0.0F, 0.0F).next();
+                bufferBuilder.vertex((double)ab, (double)ac, -0.5D).texture((double)t, (double)u).normal(1.0F, 0.0F, 0.0F).next();
+                bufferBuilder.vertex((double)ab, (double)ad, -0.5D).texture((double)t, (double)v).normal(1.0F, 0.0F, 0.0F).next();
+                bufferBuilder.vertex((double)ab, (double)ad, 0.5D).texture((double)s, (double)v).normal(1.0F, 0.0F, 0.0F).next();
+                bufferBuilder.vertex((double)ab, (double)ac, 0.5D).texture((double)s, (double)u).normal(1.0F, 0.0F, 0.0F).next();
+                tessellator.draw();
             }
         }
     }
 
-    private void vertex(Matrix4f positionMatrix, Matrix3f normalMatrix, VertexConsumer vertexConsumer, float x, float y, float u, float v, float z, int normalX, int normalY, int normalZ, int light) {
-        vertexConsumer.vertex(positionMatrix, x, y, z).color(255, 255, 255, 255).texture(u, v).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(normalMatrix, normalX, normalY, normalZ).next();
+    private void method_4076(HiResPaintingEntity paintingEntity, float f, float g) {
+        int i = MathHelper.floor(paintingEntity.x);
+        int j = MathHelper.floor(paintingEntity.y + (double)(g / 16.0F));
+        int k = MathHelper.floor(paintingEntity.z);
+        Direction direction = paintingEntity.getHorizontalFacing();
+        if (direction == Direction.NORTH) {
+            i = MathHelper.floor(paintingEntity.x + (double)(f / 16.0F));
+        }
+
+        if (direction == Direction.WEST) {
+            k = MathHelper.floor(paintingEntity.z - (double)(f / 16.0F));
+        }
+
+        if (direction == Direction.SOUTH) {
+            i = MathHelper.floor(paintingEntity.x - (double)(f / 16.0F));
+        }
+
+        if (direction == Direction.EAST) {
+            k = MathHelper.floor(paintingEntity.z + (double)(f / 16.0F));
+        }
+
+        int l = this.renderManager.world.getLightmapIndex(new BlockPos(i, j, k), 0);
+        int m = l % 65536;
+        int n = l / 65536;
+        GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, (float)m, (float)n);
+        GlStateManager.color3f(1.0F, 1.0F, 1.0F);
     }
 }
 

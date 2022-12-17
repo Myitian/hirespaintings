@@ -3,14 +3,18 @@
  */
 package com.myitian.client.texture;
 
+import com.google.common.collect.Iterables;
 import com.myitian.entity.decoration.hirespainting.HiResPaintingMotive;
 import com.myitian.hirespaintings.HiResPaintingsMain;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.*;
+import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.profiler.Profiler;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -19,17 +23,17 @@ import java.util.stream.Stream;
 public class HiResPaintingManager extends SpriteAtlasHolder {
     private static final Identifier PAINTING_BACK_ID = new Identifier(HiResPaintingsMain.MODID, "back");
     private final Map<Identifier, Boolean> missingMotives = new HashMap<>();
-
+    public static final Identifier HIRESPAINTING_ATLAS_TEX = new Identifier(HiResPaintingsMain.MODID, "textures/atlas/hirespaintings.png");
     public HiResPaintingManager(TextureManager manager) {
-        super(manager, new Identifier(HiResPaintingsMain.MODID, "textures/atlas/hirespaintings.png"), "hirespainting");
+        super(manager, HIRESPAINTING_ATLAS_TEX, "textures/hirespainting");
         MinecraftClient mc = MinecraftClient.getInstance();
         SpriteAtlasTexture.Data data = prepare(mc.getResourceManager(), mc.getProfiler());
         apply(data, mc.getResourceManager(), mc.getProfiler());
     }
 
     @Override
-    protected Stream<Identifier> getSprites() {
-        return Stream.concat(HiResPaintingsMain.HIRESPAINTING_MOTIVE.getIds().stream(), Stream.of(PAINTING_BACK_ID));
+    protected Iterable<Identifier> getSprites() {
+        return Iterables.concat(HiResPaintingsMain.HIRESPAINTING_MOTIVE.getIds(), Collections.singleton(PAINTING_BACK_ID));
     }
 
     public Sprite getPaintingSprite(HiResPaintingMotive motive) {
@@ -49,6 +53,16 @@ public class HiResPaintingManager extends SpriteAtlasHolder {
             missingMotives.put(PAINTING_BACK_ID, true);
         }
         return sprite;
+    }
+
+    @Override
+    protected SpriteAtlasTexture.Data prepare(ResourceManager resourceManager, Profiler profiler) {
+        return super.method_18668(resourceManager, profiler);
+    }
+
+    @Override
+    protected void apply(SpriteAtlasTexture.Data object, ResourceManager resourceManager, Profiler profiler) {
+        super.method_18666(object, resourceManager, profiler);
     }
 }
 

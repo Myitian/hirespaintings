@@ -2,11 +2,12 @@ package com.myitian.hirespaintings;
 
 import com.myitian.client.render.entity.HiResPaintingEntityRenderer;
 import com.myitian.client.texture.HiResPaintingManager;
+import com.myitian.entity.decoration.hirespainting.HiResPaintingEntity;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.client.render.EntityRendererRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ReloadableResourceManagerImpl;
 
@@ -23,14 +24,14 @@ public class HiResPaintingsClient implements ClientModInitializer, ClientLifecyc
     public void onInitializeClient() {
         ClientLifecycleEvents.CLIENT_STARTED.register(this);
         ClientLifecycleEvents.CLIENT_STOPPING.register(this);
-        EntityRendererRegistry.register(HiResPaintingsMain.HIRESPAINTING_ENTITY, HiResPaintingEntityRenderer::new);
+        EntityRendererRegistry.INSTANCE.register(HiResPaintingEntity.class, (dispatcher, ctx)-> new HiResPaintingEntityRenderer(dispatcher));
     }
 
     @Override
     public void onClientStarted(MinecraftClient client) {
         MinecraftClient mc = MinecraftClient.getInstance();
         HIRESPAINTING_MANAGER = new HiResPaintingManager(mc.getTextureManager());
-        ((ReloadableResourceManagerImpl) mc.getResourceManager()).registerReloader(HIRESPAINTING_MANAGER);
+        ((ReloadableResourceManagerImpl) mc.getResourceManager()).registerListener(HIRESPAINTING_MANAGER);
     }
 
     @Override

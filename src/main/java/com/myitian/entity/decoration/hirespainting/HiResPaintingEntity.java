@@ -8,8 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
@@ -38,7 +37,7 @@ public class HiResPaintingEntity extends AbstractDecorationEntity {
         for (HiResPaintingMotive value : HiResPaintingsMain.HIRESPAINTING_MOTIVE) {
             this.motive = paintingMotive = value;
             this.setFacing(direction);
-            if (!this.canStayAttached()) continue;
+            if (!this.method_6888()) continue;
             list.add(paintingMotive);
             int j = paintingMotive.getWidth() * paintingMotive.getHeight();
             if (j <= i) continue;
@@ -63,20 +62,20 @@ public class HiResPaintingEntity extends AbstractDecorationEntity {
     }
 
     @Override
-    public void writeCustomDataToNbt(NbtCompound nbt) {
+    public void writeCustomDataToTag(CompoundTag nbt) {
         nbt.putString("Motive", HiResPaintingsMain.HIRESPAINTING_MOTIVE.getId(this.motive).toString());
         nbt.putByte("Facing", (byte) this.facing.getHorizontal());
-        super.writeCustomDataToNbt(nbt);
+        super.writeCustomDataToTag(nbt);
     }
 
     @Override
-    public void readCustomDataFromNbt(NbtCompound nbt) {
+    public void readCustomDataFromTag(CompoundTag nbt) {
         String motiveStr = nbt.getString("Motive");
         if (!Util.isNullOrBlank(motiveStr)) {
             this.motive = HiResPaintingsMain.HIRESPAINTING_MOTIVE.get(Identifier.tryParse(motiveStr));
         }
         this.facing = Direction.fromHorizontal(nbt.getByte("Facing"));
-        super.readCustomDataFromNbt(nbt);
+        super.readCustomDataFromTag(nbt);
         this.setFacing(this.facing);
     }
 
@@ -96,8 +95,9 @@ public class HiResPaintingEntity extends AbstractDecorationEntity {
             return;
         }
         this.playSound(SoundEvents.ENTITY_PAINTING_BREAK, 1.0f, 1.0f);
-        if (entity instanceof PlayerEntity playerEntity) {
-            if (playerEntity.getAbilities().creativeMode) {
+        if (entity instanceof PlayerEntity) {
+            PlayerEntity playerEntity = (PlayerEntity)entity;
+            if (playerEntity.abilities.creativeMode) {
                 return;
             }
         }
@@ -110,13 +110,13 @@ public class HiResPaintingEntity extends AbstractDecorationEntity {
     }
 
     @Override
-    public void refreshPositionAndAngles(double x, double y, double z, float yaw, float pitch) {
+    public void setPositionAndAngles(double x, double y, double z, float yaw, float pitch) {
         this.setPosition(x, y, z);
     }
 
     @Override
     public void updateTrackedPositionAndAngles(double x, double y, double z, float yaw, float pitch, int interpolationSteps, boolean interpolate) {
-        BlockPos blockPos = this.attachmentPos.add(x - this.getX(), y - this.getY(), z - this.getZ());
+        BlockPos blockPos = this.blockPos.add(x - this.x, y - this.y, z - this.z);
         this.setPosition(blockPos.getX(), blockPos.getY(), blockPos.getZ());
     }
 
@@ -125,9 +125,11 @@ public class HiResPaintingEntity extends AbstractDecorationEntity {
         return new HiResPaintingSpawnS2CPacket(this);
     }
 
-    @Override
-    public ItemStack getPickBlockStack() {
-        return new ItemStack(HiResPaintingsMain.HIRESPAINTING_ITEM);
-    }
+    /*
+     * @Override
+     * public ItemStack getPickBlockStack() {
+     *     return new ItemStack(HiResPaintingsMain.HIRESPAINTING_ITEM);
+     * }
+     */
 }
 
