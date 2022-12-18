@@ -10,20 +10,18 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.*;
-import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.Profiler;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
 @Environment(value = EnvType.CLIENT)
 public class HiResPaintingManager extends SpriteAtlasHolder {
+    public static final Identifier HIRESPAINTING_ATLAS_TEX = new Identifier(HiResPaintingsMain.MODID, "textures/atlas/hirespaintings.png");
     private static final Identifier PAINTING_BACK_ID = new Identifier(HiResPaintingsMain.MODID, "back");
     private final Map<Identifier, Boolean> missingMotives = new HashMap<>();
-    public static final Identifier HIRESPAINTING_ATLAS_TEX = new Identifier(HiResPaintingsMain.MODID, "textures/atlas/hirespaintings.png");
+
     public HiResPaintingManager(TextureManager manager) {
         super(manager, HIRESPAINTING_ATLAS_TEX, "textures/hirespainting");
         MinecraftClient mc = MinecraftClient.getInstance();
@@ -53,16 +51,6 @@ public class HiResPaintingManager extends SpriteAtlasHolder {
             missingMotives.put(PAINTING_BACK_ID, true);
         }
         return sprite;
-    }
-
-    @Override
-    protected SpriteAtlasTexture.Data prepare(ResourceManager resourceManager, Profiler profiler) {
-        return super.method_18668(resourceManager, profiler);
-    }
-
-    @Override
-    protected void apply(SpriteAtlasTexture.Data object, ResourceManager resourceManager, Profiler profiler) {
-        super.method_18666(object, resourceManager, profiler);
     }
 }
 

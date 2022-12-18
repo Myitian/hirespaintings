@@ -11,7 +11,6 @@ import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
-import java.io.IOException;
 import java.util.UUID;
 
 public class HiResPaintingSpawnS2CPacket implements Packet<ClientPlayNetworkHandler> {

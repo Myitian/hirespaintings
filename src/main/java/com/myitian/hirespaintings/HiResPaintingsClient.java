@@ -24,7 +24,7 @@ public class HiResPaintingsClient implements ClientModInitializer, ClientLifecyc
     public void onInitializeClient() {
         ClientLifecycleEvents.CLIENT_STARTED.register(this);
         ClientLifecycleEvents.CLIENT_STOPPING.register(this);
-        EntityRendererRegistry.INSTANCE.register(HiResPaintingEntity.class, (dispatcher, ctx)-> new HiResPaintingEntityRenderer(dispatcher));
+        EntityRendererRegistry.INSTANCE.register(HiResPaintingEntity.class, (dispatcher, ctx) -> new HiResPaintingEntityRenderer(dispatcher));
     }
 
     @Override

@@ -4,24 +4,26 @@ import com.google.common.collect.Lists;
 import com.myitian.Util;
 import com.myitian.hirespaintings.HiResPaintingsMain;
 import com.myitian.network.packet.s2c.play.HiResPaintingSpawnS2CPacket;
+import net.fabricmc.fabric.api.entity.EntityPickInteractionAware;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class HiResPaintingEntity extends AbstractDecorationEntity {
+public class HiResPaintingEntity extends AbstractDecorationEntity implements EntityPickInteractionAware {
     public HiResPaintingMotive motive = HiResPaintingMotive.KEBAB;
 
     public HiResPaintingEntity(EntityType<? extends HiResPaintingEntity> entityType, World world) {
@@ -90,13 +92,13 @@ public class HiResPaintingEntity extends AbstractDecorationEntity {
     }
 
     @Override
-    public void onBreak(@Nullable Entity entity) {
+    public void onBreak(Entity entity) {
         if (!this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
             return;
         }
         this.playSound(SoundEvents.ENTITY_PAINTING_BREAK, 1.0f, 1.0f);
         if (entity instanceof PlayerEntity) {
-            PlayerEntity playerEntity = (PlayerEntity)entity;
+            PlayerEntity playerEntity = (PlayerEntity) entity;
             if (playerEntity.abilities.creativeMode) {
                 return;
             }
@@ -110,19 +112,24 @@ public class HiResPaintingEntity extends AbstractDecorationEntity {
     }
 
     @Override
-    public void setPositionAndAngles(double x, double y, double z, float yaw, float pitch) {
-        this.setPosition(x, y, z);
+    public void updatePositionAndAngles(double x, double y, double z, float yaw, float pitch) {
+        this.updatePosition(x, y, z);
     }
 
     @Override
     public void updateTrackedPositionAndAngles(double x, double y, double z, float yaw, float pitch, int interpolationSteps, boolean interpolate) {
-        BlockPos blockPos = this.blockPos.add(x - this.x, y - this.y, z - this.z);
-        this.setPosition(blockPos.getX(), blockPos.getY(), blockPos.getZ());
+        BlockPos blockPos = this.attachmentPos.add(x - this.x, y - this.y, z - this.z);
+        this.updatePosition(blockPos.getX(), blockPos.getY(), blockPos.getZ());
     }
 
     @Override
     public Packet<?> createSpawnPacket() {
         return new HiResPaintingSpawnS2CPacket(this);
+    }
+
+    @Override
+    public ItemStack getPickedStack(PlayerEntity player, HitResult result) {
+        return new ItemStack(HiResPaintingsMain.HIRESPAINTING_ITEM);
     }
 
     /*

@@ -1,10 +1,10 @@
 plugins {
-	id 'fabric-loom' version '0.11-SNAPSHOT'
+	id 'fabric-loom' version '0.7-SNAPSHOT'
 	id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version + "+${project.minecraft_version}"
@@ -16,12 +16,10 @@ repositories {
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
-	maven {
-        url 'https://maven.aliyun.com/nexus/content/groups/public'
-    }
-    maven {
-        url 'https://repository.hanbings.io/proxy'
-    }
+    maven { url = "https://minecraft.curseforge.com/api/maven" }
+    maven { url = 'http://maven.sargunv.s3-website-us-west-2.amazonaws.com/' }
+	maven { url = 'https://maven.aliyun.com/nexus/content/groups/public' }
+    maven { url = 'https://maven.fabricmc.net/' }
 }
 
 dependencies {
@@ -40,11 +38,6 @@ processResources {
 	filesMatching("fabric.mod.json") {
 		expand "version": project.version
 	}
-}
-
-tasks.withType(JavaCompile).configureEach {
-	// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
-	it.options.release = 17
 }
 
 java {
