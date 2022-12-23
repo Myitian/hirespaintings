@@ -2,7 +2,6 @@ package com.myitian.hirespaintings;
 
 import com.myitian.client.render.entity.HiResPaintingEntityRenderer;
 import com.myitian.client.texture.HiResPaintingManager;
-import com.myitian.entity.decoration.hirespainting.HiResPaintingEntity;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

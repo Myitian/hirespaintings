@@ -22,7 +22,7 @@ public class HiResPaintingManager extends SpriteAtlasHolder {
     private final Map<Identifier, Boolean> missingMotives = new HashMap<>();
 
     public HiResPaintingManager(TextureManager manager) {
-        super(manager, HIRESPAINTING_ATLAS_TEX, "textures/hirespainting");
+        super(manager, HIRESPAINTING_ATLAS_TEX, "hirespainting");
         MinecraftClient mc = MinecraftClient.getInstance();
         SpriteAtlasTexture.Data data = prepare(mc.getResourceManager(), mc.getProfiler());
         apply(data, mc.getResourceManager(), mc.getProfiler());
