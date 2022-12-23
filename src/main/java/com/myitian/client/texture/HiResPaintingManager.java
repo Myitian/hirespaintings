@@ -3,7 +3,6 @@
  */
 package com.myitian.client.texture;
 
-import com.google.common.collect.Iterables;
 import com.myitian.entity.decoration.hirespainting.HiResPaintingMotive;
 import com.myitian.hirespaintings.HiResPaintingsMain;
 import net.fabricmc.api.EnvType;
@@ -12,9 +11,9 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.*;
 import net.minecraft.util.Identifier;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @Environment(value = EnvType.CLIENT)
 public class HiResPaintingManager extends SpriteAtlasHolder {
@@ -30,8 +29,8 @@ public class HiResPaintingManager extends SpriteAtlasHolder {
     }
 
     @Override
-    protected Iterable<Identifier> getSprites() {
-        return Iterables.concat(HiResPaintingsMain.HIRESPAINTING_MOTIVE.getIds(), Collections.singleton(PAINTING_BACK_ID));
+    protected Stream<Identifier> getSprites() {
+        return Stream.concat(HiResPaintingsMain.HIRESPAINTING_MOTIVE.getIds().stream(), Stream.of(PAINTING_BACK_ID));
     }
 
     public Sprite getPaintingSprite(HiResPaintingMotive motive) {

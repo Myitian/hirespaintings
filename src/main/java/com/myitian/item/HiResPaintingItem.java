@@ -29,18 +29,19 @@ public class HiResPaintingItem extends Item {
         }
         World world = context.getWorld();
         HiResPaintingEntity painting = new HiResPaintingEntity(world, blockPos2, direction);
-        CompoundTag nbtCompound = itemStack.getTag();
-        if (nbtCompound != null) {
-            EntityType.loadFromEntityTag(world, playerEntity, painting, nbtCompound);
+        CompoundTag nbt = itemStack.getTag();
+        if (nbt != null) {
+            EntityType.loadFromEntityTag(world, playerEntity, painting, nbt);
         }
-        if (painting.method_6888()) {
+        if (painting.canStayAttached()) {
             if (!world.isClient) {
                 painting.onPlace();
                 world.spawnEntity(painting);
             }
             itemStack.decrement(1);
+            return world.isClient ? ActionResult.SUCCESS : ActionResult.CONSUME;
         }
-        return ActionResult.SUCCESS;
+        return ActionResult.CONSUME;
     }
 
     protected boolean canPlaceOn(PlayerEntity player, Direction side, ItemStack stack, BlockPos pos) {
