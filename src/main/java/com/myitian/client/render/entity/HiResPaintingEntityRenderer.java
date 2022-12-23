@@ -29,12 +29,11 @@ public class HiResPaintingEntityRenderer extends EntityRenderer<HiResPaintingEnt
     public void render(HiResPaintingEntity paintingEntity, double d, double e, double f, float g, float h) {
         GlStateManager.pushMatrix();
         GlStateManager.translated(d, e, f);
-        GlStateManager.rotatef(180.0F - g, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotatef(180.0f - g, 0.0f, 1.0f, 0.0f);
         GlStateManager.enableRescaleNormal();
         this.bindEntityTexture(paintingEntity);
         HiResPaintingMotive paintingMotive = paintingEntity.motive;
-        float i = 0.0625F;
-        GlStateManager.scalef(0.0625F, 0.0625F, 0.0625F);
+        GlStateManager.scalef(0.0625f, 0.0625f, 0.0625f);
         if (this.renderOutlines) {
             GlStateManager.enableColorMaterial();
             GlStateManager.setupSolidRenderingTextureCombine(this.getOutlineColor(paintingEntity));
@@ -64,12 +63,12 @@ public class HiResPaintingEntityRenderer extends EntityRenderer<HiResPaintingEnt
         float backSpriteMaxU = backSprite.getMaxU();
         float backSpriteMinV = backSprite.getMinV();
         float backSpriteMaxV = backSprite.getMaxV();
-        float backSpriteFrameV = backSprite.getFrameV(1.0D);
-        float backSpriteFrameU = backSprite.getFrameU(1.0D);
+        float backSpriteFrameV = backSprite.getFrameV(1.0);
+        float backSpriteFrameU = backSprite.getFrameU(1.0);
         int w_16 = width / 16;
         int h_16 = height / 16;
-        double w = 16.0D / (double) w_16;
-        double h = 16.0D / (double) h_16;
+        double w = 16.0 / (double) w_16;
+        double h = 16.0 / (double) h_16;
 
         for (int i = 0; i < w_16; ++i) {
             for (int j = 0; j < h_16; ++j) {
@@ -77,28 +76,34 @@ public class HiResPaintingEntityRenderer extends EntityRenderer<HiResPaintingEnt
                 float b = w_2 + (float) (i * 16);
                 float c = h_2 + (float) ((j + 1) * 16);
                 float d = h_2 + (float) (j * 16);
+
                 int x = MathHelper.floor(entity.x);
-                int y = MathHelper.floor(entity.y + (double) ((c + d) / 16.0F));
+                int y = MathHelper.floor(entity.y + (double) ((c + d) / 32.0f));
                 int z = MathHelper.floor(entity.z);
                 switch (entity.getHorizontalFacing()) {
                     case NORTH: {
                         x = MathHelper.floor(entity.x + (double) ((a + b) / 32.0f));
+                        break;
                     }
                     case WEST: {
                         z = MathHelper.floor(entity.z - (double) ((a + b) / 32.0f));
+                        break;
                     }
                     case SOUTH: {
                         x = MathHelper.floor(entity.x - (double) ((a + b) / 32.0f));
+                        break;
                     }
                     case EAST: {
                         z = MathHelper.floor(entity.z + (double) ((a + b) / 32.0f));
+                        break;
                     }
                 }
                 int l = this.renderManager.world.getLightmapIndex(new BlockPos(x, y, z), 0);
                 int m = l % 65536;
                 int n = l / 65536;
                 GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, (float) m, (float) n);
-                GlStateManager.color3f(1.0F, 1.0F, 1.0F);
+                GlStateManager.color3f(1.0f, 1.0f, 1.0f);
+
                 float paintingSpriteFrameU = paintingSprite.getFrameU(w * (double) (w_16 - i));
                 float paintingSpriteFrameU1 = paintingSprite.getFrameU(w * (double) (w_16 - (i + 1)));
                 float paintingSpriteFrameV = paintingSprite.getFrameV(h * (double) (h_16 - j));
@@ -106,30 +111,30 @@ public class HiResPaintingEntityRenderer extends EntityRenderer<HiResPaintingEnt
                 Tessellator tessellator = Tessellator.getInstance();
                 BufferBuilder bufferBuilder = tessellator.getBuffer();
                 bufferBuilder.begin(7, VertexFormats.POSITION_UV_NORMAL);
-                bufferBuilder.vertex(a, d, -0.5D).texture(paintingSpriteFrameU1, paintingSpriteFrameV).normal(0.0F, 0.0F, -1.0F).next();
-                bufferBuilder.vertex(b, d, -0.5D).texture(paintingSpriteFrameU, paintingSpriteFrameV).normal(0.0F, 0.0F, -1.0F).next();
-                bufferBuilder.vertex(b, c, -0.5D).texture(paintingSpriteFrameU, paintingSpriteFrameV1).normal(0.0F, 0.0F, -1.0F).next();
-                bufferBuilder.vertex(a, c, -0.5D).texture(paintingSpriteFrameU1, paintingSpriteFrameV1).normal(0.0F, 0.0F, -1.0F).next();
-                bufferBuilder.vertex(a, c, 0.5D).texture(backSpriteMinU, backSpriteMinV).normal(0.0F, 0.0F, 1.0F).next();
-                bufferBuilder.vertex(b, c, 0.5D).texture(backSpriteMaxU, backSpriteMinV).normal(0.0F, 0.0F, 1.0F).next();
-                bufferBuilder.vertex(b, d, 0.5D).texture(backSpriteMaxU, backSpriteMaxV).normal(0.0F, 0.0F, 1.0F).next();
-                bufferBuilder.vertex(a, d, 0.5D).texture(backSpriteMinU, backSpriteMaxV).normal(0.0F, 0.0F, 1.0F).next();
-                bufferBuilder.vertex(a, c, -0.5D).texture(backSpriteMinU, backSpriteMinV).normal(0.0F, 1.0F, 0.0F).next();
-                bufferBuilder.vertex(b, c, -0.5D).texture(backSpriteMaxU, backSpriteMinV).normal(0.0F, 1.0F, 0.0F).next();
-                bufferBuilder.vertex(b, c, 0.5D).texture(backSpriteMaxU, backSpriteFrameV).normal(0.0F, 1.0F, 0.0F).next();
-                bufferBuilder.vertex(a, c, 0.5D).texture(backSpriteMinU, backSpriteFrameV).normal(0.0F, 1.0F, 0.0F).next();
-                bufferBuilder.vertex(a, d, 0.5D).texture(backSpriteMinU, backSpriteMinV).normal(0.0F, -1.0F, 0.0F).next();
-                bufferBuilder.vertex(b, d, 0.5D).texture(backSpriteMaxU, backSpriteMinV).normal(0.0F, -1.0F, 0.0F).next();
-                bufferBuilder.vertex(b, d, -0.5D).texture(backSpriteMaxU, backSpriteFrameV).normal(0.0F, -1.0F, 0.0F).next();
-                bufferBuilder.vertex(a, d, -0.5D).texture(backSpriteMinU, backSpriteFrameV).normal(0.0F, -1.0F, 0.0F).next();
-                bufferBuilder.vertex(a, c, 0.5D).texture(backSpriteFrameU, backSpriteMinV).normal(-1.0F, 0.0F, 0.0F).next();
-                bufferBuilder.vertex(a, d, 0.5D).texture(backSpriteFrameU, backSpriteMaxV).normal(-1.0F, 0.0F, 0.0F).next();
-                bufferBuilder.vertex(a, d, -0.5D).texture(backSpriteMinU, backSpriteMaxV).normal(-1.0F, 0.0F, 0.0F).next();
-                bufferBuilder.vertex(a, c, -0.5D).texture(backSpriteMinU, backSpriteMinV).normal(-1.0F, 0.0F, 0.0F).next();
-                bufferBuilder.vertex(b, c, -0.5D).texture(backSpriteFrameU, backSpriteMinV).normal(1.0F, 0.0F, 0.0F).next();
-                bufferBuilder.vertex(b, d, -0.5D).texture(backSpriteFrameU, backSpriteMaxV).normal(1.0F, 0.0F, 0.0F).next();
-                bufferBuilder.vertex(b, d, 0.5D).texture(backSpriteMinU, backSpriteMaxV).normal(1.0F, 0.0F, 0.0F).next();
-                bufferBuilder.vertex(b, c, 0.5D).texture(backSpriteMinU, backSpriteMinV).normal(1.0F, 0.0F, 0.0F).next();
+                bufferBuilder.vertex(a, d, -0.5).texture(paintingSpriteFrameU1, paintingSpriteFrameV).normal(0.0f, 0.0f, -1.0f).next();
+                bufferBuilder.vertex(b, d, -0.5).texture(paintingSpriteFrameU, paintingSpriteFrameV).normal(0.0f, 0.0f, -1.0f).next();
+                bufferBuilder.vertex(b, c, -0.5).texture(paintingSpriteFrameU, paintingSpriteFrameV1).normal(0.0f, 0.0f, -1.0f).next();
+                bufferBuilder.vertex(a, c, -0.5).texture(paintingSpriteFrameU1, paintingSpriteFrameV1).normal(0.0f, 0.0f, -1.0f).next();
+                bufferBuilder.vertex(a, c, 0.5).texture(backSpriteMinU, backSpriteMinV).normal(0.0f, 0.0f, 1.0f).next();
+                bufferBuilder.vertex(b, c, 0.5).texture(backSpriteMaxU, backSpriteMinV).normal(0.0f, 0.0f, 1.0f).next();
+                bufferBuilder.vertex(b, d, 0.5).texture(backSpriteMaxU, backSpriteMaxV).normal(0.0f, 0.0f, 1.0f).next();
+                bufferBuilder.vertex(a, d, 0.5).texture(backSpriteMinU, backSpriteMaxV).normal(0.0f, 0.0f, 1.0f).next();
+                bufferBuilder.vertex(a, c, -0.5).texture(backSpriteMinU, backSpriteMinV).normal(0.0f, 1.0f, 0.0f).next();
+                bufferBuilder.vertex(b, c, -0.5).texture(backSpriteMaxU, backSpriteMinV).normal(0.0f, 1.0f, 0.0f).next();
+                bufferBuilder.vertex(b, c, 0.5).texture(backSpriteMaxU, backSpriteFrameV).normal(0.0f, 1.0f, 0.0f).next();
+                bufferBuilder.vertex(a, c, 0.5).texture(backSpriteMinU, backSpriteFrameV).normal(0.0f, 1.0f, 0.0f).next();
+                bufferBuilder.vertex(a, d, 0.5).texture(backSpriteMinU, backSpriteMinV).normal(0.0f, -1.0f, 0.0f).next();
+                bufferBuilder.vertex(b, d, 0.5).texture(backSpriteMaxU, backSpriteMinV).normal(0.0f, -1.0f, 0.0f).next();
+                bufferBuilder.vertex(b, d, -0.5).texture(backSpriteMaxU, backSpriteFrameV).normal(0.0f, -1.0f, 0.0f).next();
+                bufferBuilder.vertex(a, d, -0.5).texture(backSpriteMinU, backSpriteFrameV).normal(0.0f, -1.0f, 0.0f).next();
+                bufferBuilder.vertex(a, c, 0.5).texture(backSpriteFrameU, backSpriteMinV).normal(-1.0f, 0.0f, 0.0f).next();
+                bufferBuilder.vertex(a, d, 0.5).texture(backSpriteFrameU, backSpriteMaxV).normal(-1.0f, 0.0f, 0.0f).next();
+                bufferBuilder.vertex(a, d, -0.5).texture(backSpriteMinU, backSpriteMaxV).normal(-1.0f, 0.0f, 0.0f).next();
+                bufferBuilder.vertex(a, c, -0.5).texture(backSpriteMinU, backSpriteMinV).normal(-1.0f, 0.0f, 0.0f).next();
+                bufferBuilder.vertex(b, c, -0.5).texture(backSpriteFrameU, backSpriteMinV).normal(1.0f, 0.0f, 0.0f).next();
+                bufferBuilder.vertex(b, d, -0.5).texture(backSpriteFrameU, backSpriteMaxV).normal(1.0f, 0.0f, 0.0f).next();
+                bufferBuilder.vertex(b, d, 0.5).texture(backSpriteMinU, backSpriteMaxV).normal(1.0f, 0.0f, 0.0f).next();
+                bufferBuilder.vertex(b, c, 0.5).texture(backSpriteMinU, backSpriteMinV).normal(1.0f, 0.0f, 0.0f).next();
                 tessellator.draw();
             }
         }
