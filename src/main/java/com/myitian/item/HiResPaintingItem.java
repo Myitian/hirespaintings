@@ -30,9 +30,9 @@ public class HiResPaintingItem extends Item {
         }
         World world = context.getWorld();
         HiResPaintingEntity painting = new HiResPaintingEntity(world, blockPos2, direction);
-        NbtCompound nbtCompound = itemStack.getNbt();
-        if (nbtCompound != null) {
-            EntityType.loadFromEntityNbt(world, playerEntity, painting, nbtCompound);
+        NbtCompound nbt = itemStack.getTag();
+        if (nbt != null) {
+            EntityType.loadFromEntityNbt(world, playerEntity, painting, nbt);
         }
         if (painting.canStayAttached()) {
             if (!world.isClient) {

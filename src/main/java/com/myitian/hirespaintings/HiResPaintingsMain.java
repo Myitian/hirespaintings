@@ -41,8 +41,7 @@ public class HiResPaintingsMain implements ModInitializer {
     public static final DefaultedRegistry<HiResPaintingMotive> HIRESPAINTING_MOTIVE = new DefaultedRegistry<>(
             "hirespaintings:kebab",
             MOTIVE_KEY,
-            Lifecycle.experimental(),
-            null);
+            Lifecycle.experimental());
 
     @Override
     public void onInitialize() {

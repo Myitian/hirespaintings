@@ -6,7 +6,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ReloadableResourceManagerImpl;
 
@@ -23,7 +23,7 @@ public class HiResPaintingsClient implements ClientModInitializer, ClientLifecyc
     public void onInitializeClient() {
         ClientLifecycleEvents.CLIENT_STARTED.register(this);
         ClientLifecycleEvents.CLIENT_STOPPING.register(this);
-        EntityRendererRegistry.register(HiResPaintingsMain.HIRESPAINTING_ENTITY, HiResPaintingEntityRenderer::new);
+        EntityRendererRegistry.INSTANCE.register(HiResPaintingsMain.HIRESPAINTING_ENTITY, HiResPaintingEntityRenderer::new);
     }
 
     @Override
