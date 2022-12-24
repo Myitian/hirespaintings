@@ -12,9 +12,9 @@ Added an item and an entity that behave like the vanilla painting for displaying
 
 fabric loader >= 0.9.0+build.204
 
-fabric api >= 0.14.0+build.371-1.16
+fabric api >= 0.17.0+build.393-1.16
 
-minecraft = 1.16 ~ 1.16.1
+minecraft = 1.16.2 ~ 1.16.5
 
 java >= 11
 
