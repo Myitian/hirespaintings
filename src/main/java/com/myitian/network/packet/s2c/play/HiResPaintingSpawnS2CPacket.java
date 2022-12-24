@@ -14,21 +14,22 @@ import net.minecraft.util.math.Direction;
 import java.util.UUID;
 
 public class HiResPaintingSpawnS2CPacket implements Packet<ClientPlayNetworkHandler> {
-    private final int id;
-    private final UUID uuid;
-    private final BlockPos pos;
-    private final Direction facing;
-    private final int motiveId;
+    private int id;
+    private UUID uuid;
+    private BlockPos pos;
+    private Direction facing;
+    private int motiveId;
 
     public HiResPaintingSpawnS2CPacket(HiResPaintingEntity entity) {
-        this.id = entity.getId();
+        this.id = entity.getEntityId();
         this.uuid = entity.getUuid();
         this.pos = entity.getDecorationBlockPos();
         this.facing = entity.getHorizontalFacing();
         this.motiveId = HiResPaintingsMain.HIRESPAINTING_MOTIVE.getRawId(entity.motive);
     }
 
-    public HiResPaintingSpawnS2CPacket(PacketByteBuf buf) {
+    @Override
+    public void read(PacketByteBuf buf) {
         this.id = buf.readVarInt();
         this.uuid = buf.readUuid();
         this.motiveId = buf.readVarInt();
@@ -50,7 +51,7 @@ public class HiResPaintingSpawnS2CPacket implements Packet<ClientPlayNetworkHand
         MinecraftClient mc = MinecraftClient.getInstance();
         NetworkThreadUtils.forceMainThread(this, listener, mc);
         HiResPaintingEntity paintingEntity = new HiResPaintingEntity(mc.world, this.getPos(), this.getFacing(), this.getMotive());
-        paintingEntity.setId(this.getId());
+        paintingEntity.setEntityId(this.getId());
         paintingEntity.setUuid(this.getPaintingUuid());
         mc.world.addEntity(this.getId(), paintingEntity);
     }

@@ -6,12 +6,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import net.minecraft.world.event.GameEvent;
 
 public class HiResPaintingItem extends Item {
     public HiResPaintingItem(Item.Settings settings) {
@@ -30,14 +29,13 @@ public class HiResPaintingItem extends Item {
         }
         World world = context.getWorld();
         HiResPaintingEntity painting = new HiResPaintingEntity(world, blockPos2, direction);
-        NbtCompound nbtCompound = itemStack.getNbt();
-        if (nbtCompound != null) {
-            EntityType.loadFromEntityNbt(world, playerEntity, painting, nbtCompound);
+        CompoundTag nbt = itemStack.getTag();
+        if (nbt != null) {
+            EntityType.loadFromEntityTag(world, playerEntity, painting, nbt);
         }
         if (painting.canStayAttached()) {
             if (!world.isClient) {
                 painting.onPlace();
-                world.emitGameEvent(playerEntity, GameEvent.ENTITY_PLACE, blockPos);
                 world.spawnEntity(painting);
             }
             itemStack.decrement(1);

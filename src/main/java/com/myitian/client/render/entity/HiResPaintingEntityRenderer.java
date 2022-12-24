@@ -10,24 +10,28 @@ import com.myitian.hirespaintings.HiResPaintingsClient;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.*;
+import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Matrix3f;
+import net.minecraft.util.math.Matrix4f;
 
 @Environment(value = EnvType.CLIENT)
 public class HiResPaintingEntityRenderer extends EntityRenderer<HiResPaintingEntity> {
 
-    public HiResPaintingEntityRenderer(EntityRendererFactory.Context context) {
-        super(context);
+    public HiResPaintingEntityRenderer(EntityRenderDispatcher dispatcher) {
+        super(dispatcher);
     }
 
     @Override
     public void render(HiResPaintingEntity paintingEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         matrixStack.push();
-        matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180.0f - f));
+        matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180.0f - f));
         HiResPaintingMotive paintingMotive = paintingEntity.motive;
         matrixStack.scale(0.0625f, 0.0625f, 0.0625f);
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(this.getTexture(paintingEntity)));
@@ -53,8 +57,8 @@ public class HiResPaintingEntityRenderer extends EntityRenderer<HiResPaintingEnt
 
     private void renderPainting(MatrixStack matrices, VertexConsumer vertexConsumer, HiResPaintingEntity entity, int width, int height, Sprite paintingSprite, Sprite backSprite) {
         MatrixStack.Entry entry = matrices.peek();
-        Matrix4f positionMatrix = entry.getPositionMatrix();
-        Matrix3f normalMatrix = entry.getNormalMatrix();
+        Matrix4f positionMatrix = entry.getModel();
+        Matrix3f normalMatrix = entry.getNormal();
         float w_2 = (float) (-width) / 2.0f;
         float h_2 = (float) (-height) / 2.0f;
         float backSpriteMinU = backSprite.getMinU();
@@ -65,28 +69,40 @@ public class HiResPaintingEntityRenderer extends EntityRenderer<HiResPaintingEnt
         float backSpriteFrameU = backSprite.getFrameU(1.0);
         int w_16 = width / 16;
         int h_16 = height / 16;
-        double w_16_r = 16.0 / (double) w_16;
-        double h_16_r = 16.0 / (double) h_16;
+        double w = 16.0 / (double) w_16;
+        double h = 16.0 / (double) h_16;
         for (int i = 0; i < w_16; ++i) {
             for (int j = 0; j < h_16; ++j) {
                 float a = w_2 + (float) ((i + 1) * 16);
                 float b = w_2 + (float) (i * 16);
                 float c = h_2 + (float) ((j + 1) * 16);
                 float d = h_2 + (float) (j * 16);
-                int x = entity.getBlockX();
+                int x = MathHelper.floor(entity.getX());
                 int y = MathHelper.floor(entity.getY() + (double) ((c + d) / 32.0f));
-                int z = entity.getBlockZ();
+                int z = MathHelper.floor(entity.getZ());
                 switch (entity.getHorizontalFacing()) {
-                    case NORTH -> x = MathHelper.floor(entity.getX() + (double) ((a + b) / 32.0f));
-                    case WEST -> z = MathHelper.floor(entity.getZ() - (double) ((a + b) / 32.0f));
-                    case SOUTH -> x = MathHelper.floor(entity.getX() - (double) ((a + b) / 32.0f));
-                    case EAST -> z = MathHelper.floor(entity.getZ() + (double) ((a + b) / 32.0f));
+                    case NORTH: {
+                        x = MathHelper.floor(entity.getX() + (double) ((a + b) / 32.0f));
+                        break;
+                    }
+                    case WEST: {
+                        z = MathHelper.floor(entity.getZ() - (double) ((a + b) / 32.0f));
+                        break;
+                    }
+                    case SOUTH: {
+                        x = MathHelper.floor(entity.getX() - (double) ((a + b) / 32.0f));
+                        break;
+                    }
+                    case EAST: {
+                        z = MathHelper.floor(entity.getZ() + (double) ((a + b) / 32.0f));
+                        break;
+                    }
                 }
                 int light = WorldRenderer.getLightmapCoordinates(entity.world, new BlockPos(x, y, z));
-                float paintingSpriteFrameU = paintingSprite.getFrameU(w_16_r * (double) (w_16 - i));
-                float paintingSpriteFrameU1 = paintingSprite.getFrameU(w_16_r * (double) (w_16 - (i + 1)));
-                float paintingSpriteFrameV = paintingSprite.getFrameV(h_16_r * (double) (h_16 - j));
-                float paintingSpriteFrameV1 = paintingSprite.getFrameV(h_16_r * (double) (h_16 - (j + 1)));
+                float paintingSpriteFrameU = paintingSprite.getFrameU(w * (double) (w_16 - i));
+                float paintingSpriteFrameU1 = paintingSprite.getFrameU(w * (double) (w_16 - (i + 1)));
+                float paintingSpriteFrameV = paintingSprite.getFrameV(h * (double) (h_16 - j));
+                float paintingSpriteFrameV1 = paintingSprite.getFrameV(h * (double) (h_16 - (j + 1)));
                 this.vertex(positionMatrix, normalMatrix, vertexConsumer, a, d, paintingSpriteFrameU1, paintingSpriteFrameV, -0.5f, 0, 0, -1, light);
                 this.vertex(positionMatrix, normalMatrix, vertexConsumer, b, d, paintingSpriteFrameU, paintingSpriteFrameV, -0.5f, 0, 0, -1, light);
                 this.vertex(positionMatrix, normalMatrix, vertexConsumer, b, c, paintingSpriteFrameU, paintingSpriteFrameV1, -0.5f, 0, 0, -1, light);

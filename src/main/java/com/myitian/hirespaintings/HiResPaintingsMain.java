@@ -13,11 +13,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class HiResPaintingsMain implements ModInitializer {
-    public static final Logger LOGGER = LoggerFactory.getLogger("HiResPaintings");
+    public static final Logger LOGGER = LogManager.getLogger("HiResPaintings");
 
     public static final String MODID = "hirespaintings";
 
@@ -28,8 +28,7 @@ public class HiResPaintingsMain implements ModInitializer {
                             SpawnGroup.MISC,
                             (EntityType.EntityFactory<HiResPaintingEntity>) HiResPaintingEntity::new)
                     .dimensions(EntityDimensions.fixed(0.5f, 0.5f))
-                    .trackRangeChunks(10)
-                    .trackedUpdateRate(Integer.MAX_VALUE).build());
+                    .trackable(160, Integer.MAX_VALUE).build());
 
     public static final Item HIRESPAINTING_ITEM = Registry.register(
             Registry.ITEM,
@@ -41,8 +40,7 @@ public class HiResPaintingsMain implements ModInitializer {
     public static final DefaultedRegistry<HiResPaintingMotive> HIRESPAINTING_MOTIVE = new DefaultedRegistry<>(
             "hirespaintings:kebab",
             MOTIVE_KEY,
-            Lifecycle.experimental(),
-            null);
+            Lifecycle.experimental());
 
     @Override
     public void onInitialize() {
