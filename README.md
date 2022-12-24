@@ -14,7 +14,7 @@ fabric loader >= 0.9.0+build.204
 
 fabric api >= 0.14.0+build.317-1.15
 
-minecraft = 1.15.2
+minecraft = 1.15 ~ 1.15.2
 
 java >= 11
 

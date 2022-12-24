@@ -33,7 +33,7 @@ public class HiResPaintingItem extends Item {
         if (nbt != null) {
             EntityType.loadFromEntityTag(world, playerEntity, painting, nbt);
         }
-        if (painting.canStayAttached()) {
+        if (painting.method_6888()) {
             if (!world.isClient) {
                 painting.onPlace();
                 world.spawnEntity(painting);

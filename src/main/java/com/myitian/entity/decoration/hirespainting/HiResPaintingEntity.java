@@ -39,7 +39,7 @@ public class HiResPaintingEntity extends AbstractDecorationEntity implements Ent
         for (HiResPaintingMotive value : HiResPaintingsMain.HIRESPAINTING_MOTIVE) {
             this.motive = paintingMotive = value;
             this.setFacing(direction);
-            if (!this.canStayAttached()) continue;
+            if (!this.method_6888()) continue;
             list.add(paintingMotive);
             int j = paintingMotive.getWidth() * paintingMotive.getHeight();
             if (j <= i) continue;
@@ -112,14 +112,14 @@ public class HiResPaintingEntity extends AbstractDecorationEntity implements Ent
     }
 
     @Override
-    public void updatePositionAndAngles(double x, double y, double z, float yaw, float pitch) {
-        this.updatePosition(x, y, z);
+    public void setPositionAndAngles(double x, double y, double z, float yaw, float pitch) {
+        this.setPosition(x, y, z);
     }
 
     @Override
     public void updateTrackedPositionAndAngles(double x, double y, double z, float yaw, float pitch, int interpolationSteps, boolean interpolate) {
-        BlockPos blockPos = this.attachmentPos.add(x - this.getX(), y - this.getY(), z - this.getZ());
-        this.updatePosition(blockPos.getX(), blockPos.getY(), blockPos.getZ());
+        BlockPos blockPos = this.blockPos.add(x - this.getX(), y - this.getY(), z - this.getZ());
+        this.setPosition(blockPos.getX(), blockPos.getY(), blockPos.getZ());
     }
 
     @Override
