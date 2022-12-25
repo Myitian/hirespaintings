@@ -10,11 +10,11 @@ Added an item and an entity that behave like the vanilla painting for displaying
 
 ## 依赖 Depends
 
-fabric loader >= 0.13.2
+fabric loader >= 0.14.5
 
 fabric api : any
 
-minecraft = 1.18.2
+minecraft = 1.19 ~ 1.19.2
 
 java >= 17
 
