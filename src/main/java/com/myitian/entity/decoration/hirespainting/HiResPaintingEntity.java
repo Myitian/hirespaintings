@@ -1,7 +1,6 @@
 package com.myitian.entity.decoration.hirespainting;
 
 import com.google.common.collect.Lists;
-import com.myitian.Util;
 import com.myitian.hirespaintings.HiResPaintingsMain;
 import com.myitian.network.packet.s2c.play.HiResPaintingSpawnS2CPacket;
 import net.minecraft.entity.Entity;
@@ -71,10 +70,7 @@ public class HiResPaintingEntity extends AbstractDecorationEntity {
 
     @Override
     public void readCustomDataFromNbt(NbtCompound nbt) {
-        String motiveStr = nbt.getString("Motive");
-        if (!Util.isNullOrBlank(motiveStr)) {
-            this.motive = HiResPaintingsMain.HIRESPAINTING_MOTIVE.get(Identifier.tryParse(motiveStr));
-        }
+        this.motive = HiResPaintingsMain.HIRESPAINTING_MOTIVE.get(Identifier.tryParse(nbt.getString("Motive")));
         this.facing = Direction.fromHorizontal(nbt.getByte("Facing"));
         super.readCustomDataFromNbt(nbt);
         this.setFacing(this.facing);
