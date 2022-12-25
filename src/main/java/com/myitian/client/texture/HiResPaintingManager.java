@@ -8,23 +8,39 @@ import com.myitian.hirespaintings.HiResPaintingsMain;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.texture.*;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.texture.SpriteAtlasHolder;
+import net.minecraft.client.texture.TextureManager;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Unit;
+import net.minecraft.util.Util;
+import net.minecraft.util.profiler.DummyProfiler;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 @Environment(value = EnvType.CLIENT)
 public class HiResPaintingManager extends SpriteAtlasHolder {
     private static final Identifier PAINTING_BACK_ID = new Identifier(HiResPaintingsMain.MODID, "back");
-    private final Map<Identifier, Boolean> missingMotives = new HashMap<>();
 
     public HiResPaintingManager(TextureManager manager) {
         super(manager, new Identifier(HiResPaintingsMain.MODID, "textures/atlas/hirespaintings.png"), "hirespainting");
         MinecraftClient mc = MinecraftClient.getInstance();
-        SpriteAtlasTexture.Data data = prepare(mc.getResourceManager(), mc.getProfiler());
-        apply(data, mc.getResourceManager(), mc.getProfiler());
+        CompletableFuture<Unit> completableFuture = CompletableFuture.completedFuture(Unit.INSTANCE);
+        CompletableFuture<Unit> prepareStageFuture = new CompletableFuture<>();
+        reload(new Synchronizer() {
+                   public <T> CompletableFuture<T> whenPrepared(T preparedObject) {
+                       mc.execute(() -> prepareStageFuture.complete(Unit.INSTANCE));
+                       return prepareStageFuture.thenCombine(completableFuture, (unit, object) -> preparedObject);
+                   }
+               },
+                mc.getResourceManager(),
+                DummyProfiler.INSTANCE,
+                DummyProfiler.INSTANCE,
+                Util.getMainWorkerExecutor(),
+                mc);
     }
 
     @Override
@@ -34,21 +50,12 @@ public class HiResPaintingManager extends SpriteAtlasHolder {
 
     public Sprite getPaintingSprite(HiResPaintingMotive motive) {
         Identifier motiveId = HiResPaintingsMain.HIRESPAINTING_MOTIVE.getId(motive);
-        Sprite sprite = this.getSprite(motiveId);
-        if (sprite.getId() == MissingSprite.getMissingSpriteId() && !missingMotives.getOrDefault(motiveId, false)) {
-            HiResPaintingsMain.LOGGER.warn("MissingSprite: " + motiveId);
-            missingMotives.put(motiveId, true);
-        }
-        return sprite;
+        return getSprite(motiveId);
     }
 
     public Sprite getBackSprite() {
         Sprite sprite = this.getSprite(PAINTING_BACK_ID);
-        if (sprite.getId() == MissingSprite.getMissingSpriteId() && !missingMotives.getOrDefault(PAINTING_BACK_ID, false)) {
-            HiResPaintingsMain.LOGGER.warn("MissingSprite: " + PAINTING_BACK_ID);
-            missingMotives.put(PAINTING_BACK_ID, true);
-        }
-        return sprite;
+        return getSprite(PAINTING_BACK_ID);
     }
 }
 
