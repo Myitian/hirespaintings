@@ -29,9 +29,8 @@ public class HiResPaintingsClient implements ClientModInitializer, ClientLifecyc
 
     @Override
     public void onClientStarted(MinecraftClient client) {
-        MinecraftClient mc = MinecraftClient.getInstance();
-        HIRESPAINTING_MANAGER = new HiResPaintingManager(mc.getTextureManager());
-        ((ReloadableResourceManagerImpl) mc.getResourceManager()).registerListener(HIRESPAINTING_MANAGER);
+        HIRESPAINTING_MANAGER = new HiResPaintingManager(client.getTextureManager());
+        ((ReloadableResourceManagerImpl) client.getResourceManager()).registerListener(HIRESPAINTING_MANAGER);
     }
 
     @Override

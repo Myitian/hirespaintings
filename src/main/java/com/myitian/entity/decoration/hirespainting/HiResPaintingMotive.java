@@ -50,4 +50,9 @@ public class HiResPaintingMotive {
     public int getHeight() {
         return this.height;
     }
+
+    @Override
+    public String toString() {
+        return HiResPaintingsMain.HIRESPAINTING_MOTIVE.getId(this) + "@" + width + "x" + height;
+    }
 }
