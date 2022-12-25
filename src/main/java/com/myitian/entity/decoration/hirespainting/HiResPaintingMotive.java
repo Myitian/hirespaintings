@@ -1,8 +1,8 @@
 package com.myitian.entity.decoration.hirespainting;
 
 import com.myitian.hirespaintings.HiResPaintingsMain;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 public class HiResPaintingMotive {
     public static final HiResPaintingMotive KEBAB = HiResPaintingMotive.register("kebab", 16, 16);
@@ -49,5 +49,10 @@ public class HiResPaintingMotive {
 
     public int getHeight() {
         return this.height;
+    }
+
+    @Override
+    public String toString() {
+        return HiResPaintingsMain.HIRESPAINTING_MOTIVE.getId(this) + "@" + width + "x" + height;
     }
 }

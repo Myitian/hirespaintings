@@ -8,13 +8,13 @@ Added High-Resolution version of the 25 vanilla paintings.
 
 Added an item and an entity that behave like the vanilla painting for displaying high-resolution paintings.
 
-## 依赖 Depends
+## 依赖 Dependencies
 
-fabric loader >= 0.14.5
+fabric loader >= 0.14.12
 
 fabric api : any
 
-minecraft = 1.19 ~ 1.19.2
+minecraft = 1.19.3
 
 java >= 17
 

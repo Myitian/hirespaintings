@@ -1,7 +1,6 @@
 package com.myitian.entity.decoration.hirespainting;
 
 import com.google.common.collect.Lists;
-import com.myitian.Util;
 import com.myitian.hirespaintings.HiResPaintingsMain;
 import com.myitian.network.packet.s2c.play.HiResPaintingSpawnS2CPacket;
 import net.minecraft.entity.Entity;
@@ -11,6 +10,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.Packet;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -71,10 +72,7 @@ public class HiResPaintingEntity extends AbstractDecorationEntity {
 
     @Override
     public void readCustomDataFromNbt(NbtCompound nbt) {
-        String motiveStr = nbt.getString("Motive");
-        if (!Util.isNullOrBlank(motiveStr)) {
-            this.motive = HiResPaintingsMain.HIRESPAINTING_MOTIVE.get(Identifier.tryParse(motiveStr));
-        }
+        this.motive = HiResPaintingsMain.HIRESPAINTING_MOTIVE.get(Identifier.tryParse(nbt.getString("Motive")));
         this.facing = Direction.fromHorizontal(nbt.getByte("Facing"));
         super.readCustomDataFromNbt(nbt);
         this.setFacing(this.facing);
@@ -121,8 +119,14 @@ public class HiResPaintingEntity extends AbstractDecorationEntity {
     }
 
     @Override
-    public Packet<?> createSpawnPacket() {
+    public Packet<ClientPlayPacketListener> createSpawnPacket() {
         return new HiResPaintingSpawnS2CPacket(this);
+    }
+
+    @Override
+    public void onSpawnPacket(EntitySpawnS2CPacket packet) {
+        super.onSpawnPacket(packet);
+        this.setFacing(Direction.byId(packet.getEntityData()));
     }
 
     @Override

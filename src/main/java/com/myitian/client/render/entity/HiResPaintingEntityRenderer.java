@@ -15,7 +15,11 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RotationAxis;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 
 @Environment(value = EnvType.CLIENT)
 public class HiResPaintingEntityRenderer extends EntityRenderer<HiResPaintingEntity> {
@@ -27,7 +31,7 @@ public class HiResPaintingEntityRenderer extends EntityRenderer<HiResPaintingEnt
     @Override
     public void render(HiResPaintingEntity paintingEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         matrixStack.push();
-        matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180.0f - f));
+        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180.0f - f));
         HiResPaintingMotive paintingMotive = paintingEntity.motive;
         matrixStack.scale(0.0625f, 0.0625f, 0.0625f);
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(this.getTexture(paintingEntity)));
@@ -48,7 +52,7 @@ public class HiResPaintingEntityRenderer extends EntityRenderer<HiResPaintingEnt
 
     @Override
     public Identifier getTexture(HiResPaintingEntity paintingEntity) {
-        return HiResPaintingsClient.getHiResPaintingManager().getBackSprite().getAtlas().getId();
+        return HiResPaintingsClient.getHiResPaintingManager().getBackSprite().getAtlasId();
     }
 
     private void renderPainting(MatrixStack matrices, VertexConsumer vertexConsumer, HiResPaintingEntity entity, int width, int height, Sprite paintingSprite, Sprite backSprite) {

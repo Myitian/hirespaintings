@@ -4,16 +4,16 @@ import com.myitian.entity.decoration.hirespainting.HiResPaintingEntity;
 import com.myitian.entity.decoration.hirespainting.HiResPaintingMotive;
 import com.myitian.hirespaintings.HiResPaintingsMain;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.NetworkThreadUtils;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
 import java.util.UUID;
 
-public class HiResPaintingSpawnS2CPacket implements Packet<ClientPlayNetworkHandler> {
+public class HiResPaintingSpawnS2CPacket implements Packet<ClientPlayPacketListener> {
     private final int id;
     private final UUID uuid;
     private final BlockPos pos;
@@ -46,7 +46,7 @@ public class HiResPaintingSpawnS2CPacket implements Packet<ClientPlayNetworkHand
     }
 
     @Override
-    public void apply(ClientPlayNetworkHandler listener) {
+    public void apply(ClientPlayPacketListener listener) {
         MinecraftClient mc = MinecraftClient.getInstance();
         NetworkThreadUtils.forceMainThread(this, listener, mc);
         HiResPaintingEntity paintingEntity = new HiResPaintingEntity(mc.world, this.getPos(), this.getFacing(), this.getMotive());
