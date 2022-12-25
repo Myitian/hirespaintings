@@ -12,7 +12,7 @@ Added an item and an entity that behave like the vanilla painting for displaying
 
 fabric loader >= 0.11.3
 
-fabric api >= 0.35.0+1.17
+fabric api : any
 
 minecraft = 1.17 ~ 1.18.1
 
