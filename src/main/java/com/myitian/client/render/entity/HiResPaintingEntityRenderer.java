@@ -65,8 +65,8 @@ public class HiResPaintingEntityRenderer extends EntityRenderer<HiResPaintingEnt
         float backSpriteFrameU = backSprite.getFrameU(1.0);
         int w_16 = width / 16;
         int h_16 = height / 16;
-        double w_16_r = 16.0 / (double) w_16;
-        double h_16_r = 16.0 / (double) h_16;
+        double w = 16.0 / (double) w_16;
+        double h = 16.0 / (double) h_16;
         for (int i = 0; i < w_16; ++i) {
             for (int j = 0; j < h_16; ++j) {
                 float a = w_2 + (float) ((i + 1) * 16);
@@ -83,10 +83,10 @@ public class HiResPaintingEntityRenderer extends EntityRenderer<HiResPaintingEnt
                     case EAST -> z = MathHelper.floor(entity.getZ() + (double) ((a + b) / 32.0f));
                 }
                 int light = WorldRenderer.getLightmapCoordinates(entity.world, new BlockPos(x, y, z));
-                float paintingSpriteFrameU = paintingSprite.getFrameU(w_16_r * (double) (w_16 - i));
-                float paintingSpriteFrameU1 = paintingSprite.getFrameU(w_16_r * (double) (w_16 - (i + 1)));
-                float paintingSpriteFrameV = paintingSprite.getFrameV(h_16_r * (double) (h_16 - j));
-                float paintingSpriteFrameV1 = paintingSprite.getFrameV(h_16_r * (double) (h_16 - (j + 1)));
+                float paintingSpriteFrameU = paintingSprite.getFrameU(w * (double) (w_16 - i));
+                float paintingSpriteFrameU1 = paintingSprite.getFrameU(w * (double) (w_16 - (i + 1)));
+                float paintingSpriteFrameV = paintingSprite.getFrameV(h * (double) (h_16 - j));
+                float paintingSpriteFrameV1 = paintingSprite.getFrameV(h * (double) (h_16 - (j + 1)));
                 this.vertex(positionMatrix, normalMatrix, vertexConsumer, a, d, paintingSpriteFrameU1, paintingSpriteFrameV, -0.5f, 0, 0, -1, light);
                 this.vertex(positionMatrix, normalMatrix, vertexConsumer, b, d, paintingSpriteFrameU, paintingSpriteFrameV, -0.5f, 0, 0, -1, light);
                 this.vertex(positionMatrix, normalMatrix, vertexConsumer, b, c, paintingSpriteFrameU, paintingSpriteFrameV1, -0.5f, 0, 0, -1, light);

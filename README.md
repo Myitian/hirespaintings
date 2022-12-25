@@ -10,7 +10,9 @@ Added an item and an entity that behave like the vanilla painting for displaying
 
 ## 依赖 Depends
 
-fabricloader >= 0.13.3
+fabric loader >= 0.13.2
+
+fabric api : any
 
 minecraft = 1.18.2
 
