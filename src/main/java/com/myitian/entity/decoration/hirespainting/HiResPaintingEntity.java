@@ -1,7 +1,6 @@
 package com.myitian.entity.decoration.hirespainting;
 
 import com.google.common.collect.Lists;
-import com.myitian.Util;
 import com.myitian.hirespaintings.HiResPaintingsMain;
 import com.myitian.network.packet.s2c.play.HiResPaintingSpawnS2CPacket;
 import net.fabricmc.fabric.api.entity.EntityPickInteractionAware;
@@ -73,10 +72,7 @@ public class HiResPaintingEntity extends AbstractDecorationEntity implements Ent
 
     @Override
     public void readCustomDataFromTag(CompoundTag nbt) {
-        String motiveStr = nbt.getString("Motive");
-        if (!Util.isNullOrBlank(motiveStr)) {
-            this.motive = HiResPaintingsMain.HIRESPAINTING_MOTIVE.get(Identifier.tryParse(motiveStr));
-        }
+        this.motive = HiResPaintingsMain.HIRESPAINTING_MOTIVE.get(Identifier.tryParse(nbt.getString("Motive")));
         this.facing = Direction.fromHorizontal(nbt.getByte("Facing"));
         super.readCustomDataFromTag(nbt);
         this.setFacing(this.facing);
