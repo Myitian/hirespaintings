@@ -8,7 +8,7 @@ Added High-Resolution version of the 25 vanilla paintings.
 
 Added an item and an entity that behave like the vanilla painting for displaying high-resolution paintings.
 
-## 依赖 Depends
+## 依赖 Dependencies
 
 fabric loader >= 0.14.5
 
