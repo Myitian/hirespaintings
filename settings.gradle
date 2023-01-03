@@ -1,8 +1,8 @@
 pluginManagement {
     repositories {
         maven { url = "https://minecraft.curseforge.com/api/maven" }
-        maven { url = 'http://maven.sargunv.s3-website-us-west-2.amazonaws.com/' }
 	    maven { url = 'https://maven.aliyun.com/nexus/content/groups/public' }
+        maven { url = 'https://repository.hanbings.io/proxy' }
         maven { url = 'https://maven.fabricmc.net/' }
         mavenCentral()
         gradlePluginPortal()
